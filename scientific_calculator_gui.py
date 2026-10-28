@@ -1,14 +1,18 @@
+
 import tkinter as tk
 import math
+
 
 # Main window
 root = tk.Tk()
 root.title("Scientific Calculator")
 root.geometry("330x410")
 root.resizable(False, False)
-root.configure(bg="#87CEEB")
+root.configure(bg="#000000")
+
 
 expression = ""
+
 
 # Display
 display = tk.Entry(
@@ -41,10 +45,12 @@ def calculate():
         allowed = "0123456789+-*/(). "
         if not all(char in allowed for char in expression):
             raise ValueError
+
         result = eval(expression, {"__builtins__": {}}, {})
         display.delete(0, tk.END)
         display.insert(tk.END, str(result))
         expression = str(result)
+
     except (ValueError, ZeroDivisionError, SyntaxError, TypeError):
         display.delete(0, tk.END)
         display.insert(tk.END, "Error")
@@ -55,6 +61,7 @@ def scientific(operation):
     global expression
     try:
         value = float(display.get())
+
         if operation == "√":
             result = math.sqrt(value)
         elif operation == "sin":
@@ -69,9 +76,11 @@ def scientific(operation):
             result = value ** 2
         else:
             return
+
         expression = str(result)
         display.delete(0, tk.END)
         display.insert(tk.END, expression)
+
     except (ValueError, ZeroDivisionError):
         display.delete(0, tk.END)
         display.insert(tk.END, "Error")
@@ -79,13 +88,15 @@ def scientific(operation):
 
 
 # Button helper
-def make_button(text, x, y, width, command, color="#F0F0F0"):
+def make_button(text, x, y, width, command, color="#FF9500"):
     button = tk.Button(
         root,
         text=text,
         font=("Arial", 11),
         bg=color,
-        activebackground="#D6EAF8",
+        fg="white",
+        activebackground="#E68A00",
+        activeforeground="white",
         command=command
     )
     button.place(x=x, y=y, width=width, height=30)
@@ -100,21 +111,28 @@ buttons = [
 ]
 
 for text, x, y in buttons:
-    make_button(text, x, y, 75, lambda value=text: press(value))
+    make_button(
+        text, x, y, 75,
+        lambda value=text: press(value),
+        color="#3A3A3C"
+    )
+
 
 # Basic operation buttons
 make_button("+", 15, 212, 75, lambda: press("+"))
 make_button("-", 95, 212, 75, lambda: press("-"))
 make_button("*", 175, 212, 75, lambda: press("*"))
 make_button("/", 15, 250, 75, lambda: press("/"))
-make_button("Clear", 95, 250, 155, clear)
+make_button("Clear", 95, 250, 155, clear, color="#3A3A3C")
 make_button("=", 60, 288, 170, calculate)
 
-# A small row of scientific functions
+
+# Scientific functions
 make_button("√", 15, 326, 45, lambda: scientific("√"))
 make_button("x²", 68, 326, 45, lambda: scientific("x²"))
 make_button("sin", 121, 326, 45, lambda: scientific("sin"))
 make_button("cos", 174, 326, 45, lambda: scientific("cos"))
 make_button("log", 227, 326, 45, lambda: scientific("log"))
+
 
 root.mainloop()
